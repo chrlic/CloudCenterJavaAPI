@@ -69,5 +69,5 @@ task createPom(dependsOn: buildJar) {
 task prepareArtifact(type: Copy, dependsOn: createPom) {
 	from "${buildDir}/c3api-${apiVersion}.pom"
 	from "${buildDir}/libs/c3api-${apiVersion}.jar"
-	into "maven-repo"
+	into "maven-repo/cz/gargoyle/c3api/${apiVersion}/"
 }
