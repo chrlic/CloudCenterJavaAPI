@@ -55,6 +55,36 @@ class C3Job {
 		return submissionResults
 	}
 					
+	JobSubmittedResults submitSimple(C3Session session, Application app, String deploymentName, 
+							String accountId, String cloudId) {
+							
+		String appId = app.id
+		
+		String body = """
+		{
+			"appId": "${appId}",
+			"name": "${deploymentName}",
+			"parameters": {
+				"cloudParams": {
+					"accountId": "${accountId}",
+					"cloudInstance": "${cloudInstance}"
+        		}
+			}
+		}
+		"""
+		
+		HttpResponse response = session.post(url, body)
+		
+		int httpStatus = response.getStatusLine().getStatusCode();
+		
+		String responseSubmitText = session.streamToString( response.getEntity().getContent() )
+		
+		Gson gson = new Gson()
+		JobSubmittedResults submissionResults = gson.fromJson(responseSubmitText, JobSubmittedResults.class)
+		
+		return submissionResults
+	}
+					
 	int getJobStatus(C3Session session, String jobId) {
 		
 		String url = "/v1/jobs/${jobId}"
