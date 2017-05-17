@@ -56,7 +56,7 @@ class C3Job {
 	}
 					
 	JobSubmittedResults submitSimple(C3Session session, Application app, String deploymentName, 
-							String accountId, String cloudId) {
+							String accountId, String cloudRegionId) {
 							
 		String appId = app.id
 		
@@ -67,7 +67,7 @@ class C3Job {
 			"parameters": {
 				"cloudParams": {
 					"accountId": "${accountId}",
-					"cloudInstance": "${cloudInstance}"
+					"cloudRegionId": "${cloudRegionId}"
         		}
 			}
 		}
