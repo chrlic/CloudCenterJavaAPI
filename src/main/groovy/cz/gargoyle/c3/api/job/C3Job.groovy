@@ -59,10 +59,13 @@ class C3Job {
 							String accountId, String cloudRegionId) {
 							
 		String appId = app.id
+		String serviceTierId = app.serviceTierId
+		
 		
 		String body = """
 		{
 			"appId": "${appId}",
+			"serviceTierId": "${serviceTierId}",
 			"name": "${deploymentName}",
 			"parameters": {
 				"cloudParams": {
