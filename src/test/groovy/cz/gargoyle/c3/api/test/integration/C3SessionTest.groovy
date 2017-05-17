@@ -23,8 +23,52 @@ class C3SessionTest {
 		test.test()
 	}
 	
-	@Test
 	public void test() {
+		
+		Gson gson = new GsonBuilder().setPrettyPrinting().create()
+		
+		String username = "cliqradmin"
+		String key = "A740EDF0734894E9"
+	
+		C3Session session = new C3Session().setHost("10.62.8.156").setKey(key).setUsername(username).build()
+		
+		C3Application app = new C3Application()
+		Applications apps = app.listApplications(session)
+		//println gson.toJson(apps)
+		
+		String cloudTag = "Development"
+		
+		C3DeploymentEnvironment devEnv = new C3DeploymentEnvironment()
+		TargetDeploymentEnvironment envs = devEnv.getTargetDeploymentEnvironment(session, cloudTag)
+		//println gson.toJson(envs)
+				
+		C3Job job = new C3Job()
+		Application a = apps.apps.find { it.name == "Pivni obchod" }
+
+		ApplicationDetails appDetails = app.getApplicationDetails(session, a.id)
+		//println gson.toJson(appDetails)
+		
+		//return
+		
+		String deploymentName = "po_${new Date().time}"
+		//String cloudTarget = envs.deploymentEnvironments[0].associatedClouds[0].regionName
+		//String appServiceId = appDetails.serviceTiers[0].id
+		
+		//Collection<EnvironmentInstance> envInstances = devEnv.getInstancesForApplication(session, appServiceId, envs.deploymentEnvironments[0])
+		
+		//String cloudInstance = envInstances[0].instanceType
+		
+		JobSubmittedResults jobSubmissionResults = job.submitSimple(session, a, deploymentName, "1", "1", "1")
+		//println gson.toJson(jobSubmissionResults)
+		
+		//job submission results - check status
+		job.waitForJob(session, jobSubmissionResults.id, 30)
+		
+		println "Job done"
+	}
+
+	@Test
+	public void testv45dCloud() {
 		
 		Gson gson = new GsonBuilder().setPrettyPrinting().create()
 		

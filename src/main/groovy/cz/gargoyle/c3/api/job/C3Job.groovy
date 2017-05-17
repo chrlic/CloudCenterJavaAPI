@@ -56,26 +56,220 @@ class C3Job {
 	}
 					
 	JobSubmittedResults submitSimple(C3Session session, Application app, String deploymentName, 
-							String accountId, String cloudRegionId) {
+							String environmentId, String cloudRegionId, String accountId) {
 							
 		String appId = app.id
+		String appVersion = app.versions[0]
 		String serviceTierId = app.serviceTierId
 		
-		
 		String body = """
+{
+	"appId": "${appId}",
+	"appVersion": "${appVersion}",
+	"name": "${deploymentName}",
+	"environmentId": "${environmentId}",
+	"parameters": {
+		"cloudParams": {
+			"cloudRegionId": "${cloudRegionId}",
+			"accountId": "${accountId}"
+		}
+	}
+,
+	"jobs": [
 		{
-			"appId": "${appId}",
-			"serviceTierId": "${serviceTierId}",
-			"name": "${deploymentName}",
+			"tierId": "32",
+			"policyIds": null,
+			"tagIds": [
+			],
+			"securityProfileIds": [
+			],
 			"parameters": {
+				"appParams": [
+					{
+						"name": "referredJob",
+						"value": ""
+					}
+				],
 				"cloudParams": {
-					"accountId": "${accountId}",
-					"cloudRegionId": "${cloudRegionId}"
-        		}
+					"cloudRegionId": "1",
+					"accountId": "1",
+					"volumes": [
+					],
+					"rootVolumeSize": "0",
+					"cloudProperties": [
+						{
+							"name": "FullClone",
+							"value": "true"
+						},
+						{
+							"name": "RootDiskResizeConfig",
+							"value": "false"
+						},
+						{
+							"name": "UserDatastoreCluster",
+							"value": "SSD_SMALL"
+						},
+						{
+							"name": "UserDataCenterName",
+							"value": "DC1"
+						},
+						{
+							"name": "UserClusterName",
+							"value": "Main"
+						},
+						{
+							"name": "UserResourcePoolName",
+							"value": ""
+						},
+						{
+							"name": "UserTargetDeploymentFolder",
+							"value": "/C3-Workloads"
+						}
+					],
+					"nics": [
+						{
+							"order": 1,
+							"id": "VM Network",
+							"type": "NETWORK"
+						}
+					],
+					"instance": "small"
+				}
+			},
+			"numNodesToLaunch": 1
+		},
+		{
+			"tierId": "33",
+			"policyIds": null,
+			"tagIds": [
+			],
+			"securityProfileIds": [
+			],
+			"parameters": {
+				"appParams": [
+					{
+						"name": "referredJob",
+						"value": ""
+					}
+				],
+				"cloudParams": {
+					"cloudRegionId": "1",
+					"accountId": "1",
+					"volumes": [
+					],
+					"rootVolumeSize": "0",
+					"cloudProperties": [
+						{
+							"name": "FullClone",
+							"value": "true"
+						},
+						{
+							"name": "RootDiskResizeConfig",
+							"value": "false"
+						},
+						{
+							"name": "UserDatastoreCluster",
+							"value": "SSD_SMALL"
+						},
+						{
+							"name": "UserDataCenterName",
+							"value": "DC1"
+						},
+						{
+							"name": "UserClusterName",
+							"value": "Main"
+						},
+						{
+							"name": "UserResourcePoolName",
+							"value": ""
+						},
+						{
+							"name": "UserTargetDeploymentFolder",
+							"value": "/C3-Workloads"
+						}
+					],
+					"nics": [
+						{
+							"order": 1,
+							"id": "VM Network",
+							"type": "NETWORK"
+						}
+					],
+					"instance": "small"
+				}
+			}
+		},
+		{
+			"tierId": "34",
+			"policyIds": null,
+			"tagIds": [
+			],
+			"securityProfileIds": [
+			],
+			"parameters": {
+				"appParams": [
+					{
+						"name": "referredJob",
+						"value": ""
+					}
+				],
+				"cloudParams": {
+					"cloudRegionId": "1",
+					"accountId": "1",
+					"volumes": [
+						{
+							"name": "Volume1",
+							"size": 10,
+							"type": "min4g",
+							"iops": null
+						}
+					],
+					"rootVolumeSize": "0",
+					"cloudProperties": [
+						{
+							"name": "FullClone",
+							"value": "true"
+						},
+						{
+							"name": "RootDiskResizeConfig",
+							"value": "false"
+						},
+						{
+							"name": "UserDatastoreCluster",
+							"value": "SSD_SMALL"
+						},
+						{
+							"name": "UserDataCenterName",
+							"value": "DC1"
+						},
+						{
+							"name": "UserClusterName",
+							"value": "Main"
+						},
+						{
+							"name": "UserResourcePoolName",
+							"value": ""
+						},
+						{
+							"name": "UserTargetDeploymentFolder",
+							"value": "/C3-Workloads"
+						}
+					],
+					"nics": [
+						{
+							"order": 1,
+							"id": "VM Network",
+							"type": "NETWORK"
+						}
+					],
+					"instance": "small"
+				}
 			}
 		}
+	]
+}
 		"""
-		
+		String url = "/v2/jobs.json"
 		HttpResponse response = session.post(url, body)
 		
 		int httpStatus = response.getStatusLine().getStatusCode();
@@ -124,7 +318,7 @@ class C3Job {
 				}
 			}
 		}
-		timer.scheduleAtFixedRate(task, 0, JOB_REFTRESH_INTERVAL_SEC)
+		timer.scheduleAtFixedRate(task, 0, timeoutSeconds * 1000)
 
 		println "Waiting on semaphore"
 		
